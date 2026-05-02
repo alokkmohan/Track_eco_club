@@ -157,6 +157,7 @@ def generate_index(summary, generated_time):
     cards = ""
     for s in sorted(summary, key=lambda x: x["district"]):
         dist = s["district"]
+        priv_missing = s["Private Schools"]["total"] == 0
         total_d    = sum(s[sh]["total"]    for sh in ["Govt Schools","Aided Schools","Private Schools"])
         uploaded_d = sum(s[sh]["uploaded"] for sh in ["Govt Schools","Aided Schools","Private Schools"])
         pending_d  = total_d - uploaded_d
@@ -167,18 +168,26 @@ def generate_index(summary, generated_time):
         rows = ""
         for sh, icon in [("Govt Schools","🏛️"), ("Aided Schools","🤝"), ("Private Schools","🏫")]:
             t = s[sh]["total"]; u = s[sh]["uploaded"]; p = s[sh]["pending"]
-            rows += f"""<tr>
+            if sh == "Private Schools" and priv_missing:
+                rows += f"""<tr class="table-warning">
+              <td>{icon} Private</td>
+              <td colspan="3" class="text-center text-warning fw-bold small">⚠️ List pending</td>
+            </tr>"""
+            else:
+                rows += f"""<tr>
               <td>{icon} {sh.replace(' Schools','')}</td>
               <td class="text-center">{t}</td>
               <td class="text-center fw-bold text-success">{u}</td>
               <td class="text-center text-danger">{p}</td>
             </tr>"""
 
+        priv_badge = ' <span class="badge bg-warning text-dark ms-1" title="Private school list not yet added">⚠️ Pvt</span>' if priv_missing else ""
+
         cards += f"""
         <div class="col-xl-4 col-md-6 mb-4 district-card" data-name="{dist.lower()}">
           <div class="card h-100 shadow-sm border-0">
-            <div class="card-header text-white fw-bold" style="background:#1F4E79;border-radius:12px 12px 0 0">
-              📍 {dist}
+            <div class="card-header text-white fw-bold d-flex justify-content-between align-items-center" style="background:#1F4E79;border-radius:12px 12px 0 0">
+              <span>📍 {dist}</span>{priv_badge}
             </div>
             <div class="card-body pb-2">
               <div class="d-flex justify-content-between mb-1">
