@@ -11,7 +11,6 @@ st.set_page_config(
     layout="wide"
 )
 
-# ── District config: (sec_pattern, notif_pattern, label, exact_match) ──
 DISTRICTS = {
     "Lakhimpur Kheri":  ("KHERI",       "KHERI",          True),
     "Auraiya":          ("AURAIYA",      "AURAIYA",        True),
@@ -56,7 +55,17 @@ def load_secondary_list():
 def load_notifications():
     return pd.read_excel("data/All_Schools_with_Notifications_UP.xlsx")
 
-def get_district_data(notifications_df, secondary_data, dist_label):
+def has_private_data(secondary_data, dist_label):
+    sec_pattern, _, exact = DISTRICTS[dist_label]
+    priv_df  = secondary_data["Private Schools"]
+    dist_col = [c for c in priv_df.columns if 'district' in c.lower()][0]
+    if exact:
+        rows = priv_df[priv_df[dist_col].astype(str).str.strip().str.upper() == sec_pattern]
+    else:
+        rows = priv_df[priv_df[dist_col].astype(str).str.strip().str.upper().str.contains(sec_pattern, regex=True, na=False)]
+    return len(rows) > 0
+
+def get_district_data(notifications_df, secondary_data, dist_label, extra_private_df=None):
     sec_pattern, notif_pattern, exact = DISTRICTS[dist_label]
 
     if exact:
@@ -69,29 +78,33 @@ def get_district_data(notifications_df, secondary_data, dist_label):
 
     result = {}
     for sheet, df in secondary_data.items():
-        dist_col  = [c for c in df.columns if 'district' in c.lower()][0]
-        udise_col = [c for c in df.columns if 'udise' in c.lower()][0]
-
-        if exact:
-            d = df[df[dist_col].astype(str).str.strip().str.upper() == sec_pattern].copy()
+        if sheet == "Private Schools" and extra_private_df is not None:
+            d = extra_private_df.copy()
+            dist_col  = [c for c in d.columns if 'district' in c.lower()][0]
+            udise_col = [c for c in d.columns if 'udise' in c.lower()][0]
+            d[dist_col] = dist_label
         else:
-            d = df[df[dist_col].astype(str).str.strip().str.upper().str.contains(sec_pattern, regex=True, na=False)].copy()
+            dist_col  = [c for c in df.columns if 'district' in c.lower()][0]
+            udise_col = [c for c in df.columns if 'udise' in c.lower()][0]
+            if exact:
+                d = df[df[dist_col].astype(str).str.strip().str.upper() == sec_pattern].copy()
+            else:
+                d = df[df[dist_col].astype(str).str.strip().str.upper().str.contains(sec_pattern, regex=True, na=False)].copy()
+            d[dist_col] = dist_label
 
-        d[dist_col]  = dist_label
         d['UDISE_norm'] = d[udise_col].apply(normalize_udise)
-        d[udise_col] = d['UDISE_norm']
+        d[udise_col]    = d['UDISE_norm']
         d['Upload Status'] = d['UDISE_norm'].apply(lambda x: 'Uploaded' if x in notif_set else 'Pending')
         d = d.drop(columns=['UDISE_norm'])
         result[sheet] = d
 
     return result
 
-def build_excel(district_data, dist_label):
+def build_excel(district_data):
     output = io.BytesIO()
     writer = pd.ExcelWriter(output, engine='openpyxl')
 
     for sheet, df in district_data.items():
-        udise_col = [c for c in df.columns if 'udise' in c.lower()][0]
         df_out = df.reset_index(drop=True)
         df_out.index = df_out.index + 1
         df_out.index.name = 'S.No.'
@@ -109,7 +122,7 @@ def build_excel(district_data, dist_label):
                   top=Side(style='thin'),  bottom=Side(style='thin'))
 
     for ws in wb.worksheets:
-        status_col   = None
+        status_col    = None
         udise_col_idx = None
         for cell in ws[1]:
             if cell.value == 'Upload Status':
@@ -154,7 +167,7 @@ def build_excel(district_data, dist_label):
     final.seek(0)
     return final
 
-def private_template_excel():
+def private_template_excel(dist_label):
     df = pd.DataFrame(columns=['District Name', 'Block Name', 'School Name', 'UDISE Code', 'Board', 'Managed By'])
     output = io.BytesIO()
     with pd.ExcelWriter(output, engine='openpyxl') as writer:
@@ -162,132 +175,148 @@ def private_template_excel():
     output.seek(0)
     return output
 
-# ────────────────────────────────────────────────────────────────────────
+def show_district_report(notifications_df, secondary_data, dist_label, extra_private=None):
+    district_data = get_district_data(notifications_df, secondary_data, dist_label, extra_private)
+
+    c1, c2, c3 = st.columns(3)
+    for col_ui, sheet_name, emoji in zip(
+        [c1, c2, c3],
+        ["Govt Schools", "Aided Schools", "Private Schools"],
+        ["🏛️", "🤝", "🏫"]
+    ):
+        df = district_data[sheet_name]
+        total    = len(df)
+        uploaded = (df['Upload Status'] == 'Uploaded').sum()
+        pending  = total - uploaded
+        pct      = round(uploaded / total * 100) if total > 0 else 0
+        with col_ui:
+            st.metric(
+                label=f"{emoji} {sheet_name.replace(' Schools','')}",
+                value=f"{uploaded} / {total}",
+                delta=f"{pending} pending" if pending > 0 else "✅ All uploaded",
+                delta_color="inverse"
+            )
+            st.progress(pct / 100)
+
+    excel_data = build_excel(district_data)
+    st.download_button(
+        label=f"⬇️ {dist_label} — Full Report Download",
+        data=excel_data,
+        file_name=f"{dist_label}_ECO_Club_Status.xlsx",
+        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        type="primary",
+        use_container_width=True
+    )
+
+    st.markdown("#### 📋 School-wise Detail")
+    tabs = st.tabs(["🏛️ Govt Schools", "🤝 Aided Schools", "🏫 Private Schools"])
+    for tab, sheet_name in zip(tabs, ["Govt Schools", "Aided Schools", "Private Schools"]):
+        with tab:
+            df = district_data[sheet_name].reset_index(drop=True)
+            df.index = df.index + 1
+            pending_df  = df[df['Upload Status'] == 'Pending']
+            uploaded_df = df[df['Upload Status'] == 'Uploaded']
+            sub1, sub2 = st.tabs([
+                f"❌ Pending ({len(pending_df)})",
+                f"✅ Uploaded ({len(uploaded_df)})"
+            ])
+            with sub1:
+                if len(pending_df) > 0:
+                    st.dataframe(pending_df, use_container_width=True)
+                else:
+                    st.success("Sab schools ne upload kar di! 🎉")
+            with sub2:
+                st.dataframe(uploaded_df, use_container_width=True)
+
+# ─────────────────────────────────────────────────────────────
 # UI
-# ────────────────────────────────────────────────────────────────────────
+# ─────────────────────────────────────────────────────────────
 
 st.title("🌿 ECO Club — Notification Upload Status")
 st.markdown("---")
 
-# ── Sidebar ──
-with st.sidebar:
-    st.markdown("### ℹ️ About")
-    st.caption("Notifications data is updated centrally by admin. DCs can directly select their district and download the report.")
-    st.markdown("---")
-    st.caption("Data source: Final_Secondary_School_List.xlsx")
+if 'uploaded_private' not in st.session_state:
+    st.session_state.uploaded_private = {}
 
-# Load data
 with st.spinner("Data load ho raha hai..."):
     notifications_df = load_notifications()
     secondary_data   = load_secondary_list()
 
-# ── District selection ──
-st.subheader("📍 District Select Karein")
-district_list = sorted(DISTRICTS.keys())
-selected = st.selectbox("District", ["-- Select --"] + district_list)
+# Categorize districts
+ready_districts   = []
+pending_districts = []
+for dist in sorted(DISTRICTS.keys()):
+    if has_private_data(secondary_data, dist) or dist in st.session_state.uploaded_private:
+        ready_districts.append(dist)
+    else:
+        pending_districts.append(dist)
 
-if selected == "-- Select --":
-    st.stop()
+col_left, col_right = st.columns([6, 4], gap="large")
 
-# ── Check if private list exists for district ──
-sec_pattern, _, exact = DISTRICTS[selected]
-priv_df  = secondary_data["Private Schools"]
-dist_col = [c for c in priv_df.columns if 'district' in c.lower()][0]
+# ── LEFT: Report ready districts ──
+with col_left:
+    st.markdown(f"### ✅ Report Ready Districts ({len(ready_districts)})")
+    selected = st.selectbox(
+        "Apna jila chunein",
+        ["-- Jila chunein --"] + ready_districts,
+        key="ready_sel"
+    )
+    if selected != "-- Jila chunein --":
+        extra = st.session_state.uploaded_private.get(selected)
+        with st.spinner(f"{selected} ki report ban rahi hai..."):
+            show_district_report(notifications_df, secondary_data, selected, extra)
 
-if exact:
-    priv_rows = priv_df[priv_df[dist_col].astype(str).str.strip().str.upper() == sec_pattern]
-else:
-    priv_rows = priv_df[priv_df[dist_col].astype(str).str.strip().str.upper().str.contains(sec_pattern, regex=True, na=False)]
+# ── RIGHT: Pending districts (private list missing) ──
+with col_right:
+    st.markdown(f"### ⚠️ Private List Pending ({len(pending_districts)})")
 
-has_private_list = len(priv_rows) > 0
-
-# ── Generate report ──
-with st.spinner("Report generate ho rahi hai..."):
-    district_data = get_district_data(notifications_df, secondary_data, selected)
-
-# ── Summary cards ──
-st.markdown(f"### 📊 {selected} — Upload Status Summary")
-col1, col2, col3 = st.columns(3)
-
-for col_ui, sheet_name, emoji in zip(
-    [col1, col2, col3],
-    ["Govt Schools", "Aided Schools", "Private Schools"],
-    ["🏛️", "🤝", "🏫"]
-):
-    df = district_data[sheet_name]
-    total    = len(df)
-    uploaded = (df['Upload Status'] == 'Uploaded').sum()
-    pending  = total - uploaded
-    pct      = round(uploaded / total * 100) if total > 0 else 0
-    with col_ui:
-        st.metric(
-            label=f"{emoji} {sheet_name.replace(' Schools','')}",
-            value=f"{uploaded} / {total}",
-            delta=f"{pending} pending" if pending > 0 else "✅ All uploaded",
-            delta_color="inverse"
+    if not pending_districts:
+        st.success("Sabhi districts ki private school list available hai! 🎉")
+    else:
+        pending_sel = st.selectbox(
+            "Jila chunein",
+            ["-- Jila chunein --"] + pending_districts,
+            key="pending_sel"
         )
-        st.progress(pct / 100)
 
-st.markdown("---")
+        if pending_sel != "-- Jila chunein --":
+            st.info(f"**{pending_sel}** ki private school list abhi upload nahi hui।")
 
-# ── Private list missing warning ──
-if not has_private_list:
-    st.warning(f"⚠️ **{selected}** ke Private Schools ki list abhi upload nahi hui है।")
-    st.markdown("**Template download karein, fill karein aur upload karein:**")
+            template = private_template_excel(pending_sel)
+            st.download_button(
+                label="📥 Template Download Karen",
+                data=template,
+                file_name=f"{pending_sel}_Private_School_Template.xlsx",
+                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                use_container_width=True
+            )
 
-    tcol1, tcol2 = st.columns(2)
-    with tcol1:
-        template = private_template_excel()
-        st.download_button(
-            label="📥 Private School Template Download",
-            data=template,
-            file_name=f"{selected}_Private_School_Template.xlsx",
-            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        )
-    with tcol2:
-        uploaded_list = st.file_uploader(
-            f"📤 {selected} Private School List Upload (.xlsx/.csv)",
-            type=["xlsx", "csv"],
-            key="priv_upload"
-        )
-        if uploaded_list:
-            st.success("✅ File upload ho gayi — is session ke liye report generate ho rahi hai।")
+            st.markdown("**Template bharke yahan upload karein:**")
+            uploaded_list = st.file_uploader(
+                "Private School List (.xlsx / .csv)",
+                type=["xlsx", "csv"],
+                key=f"priv_{pending_sel}"
+            )
 
-st.markdown("---")
+            if uploaded_list:
+                try:
+                    if uploaded_list.name.endswith('.csv'):
+                        df_priv = pd.read_csv(uploaded_list)
+                    else:
+                        df_priv = pd.read_excel(uploaded_list)
 
-# ── Tabs: sheet-wise data ──
-st.markdown("### 📋 School-wise Detail")
-tabs = st.tabs(["🏛️ Govt Schools", "🤝 Aided Schools", "🏫 Private Schools"])
+                    udise_cols = [c for c in df_priv.columns if 'udise' in c.lower()]
+                    if not udise_cols:
+                        st.error("❌ File mein UDISE column nahi mila। Template use karein।")
+                    else:
+                        st.session_state.uploaded_private[pending_sel] = df_priv
+                        st.success(f"✅ {pending_sel} ki list upload ho gayi! Left panel mein district aa jaega।")
+                        st.rerun()
+                except Exception as e:
+                    st.error(f"File padhne mein dikkat: {e}")
 
-for tab, sheet_name in zip(tabs, ["Govt Schools", "Aided Schools", "Private Schools"]):
-    with tab:
-        df = district_data[sheet_name].reset_index(drop=True)
-        df.index = df.index + 1
-
-        pending_df  = df[df['Upload Status'] == 'Pending']
-        uploaded_df = df[df['Upload Status'] == 'Uploaded']
-
-        sub1, sub2 = st.tabs([
-            f"❌ Pending ({len(pending_df)})",
-            f"✅ Uploaded ({len(uploaded_df)})"
-        ])
-        with sub1:
-            if len(pending_df) > 0:
-                st.dataframe(pending_df, use_container_width=True)
-            else:
-                st.success("Sab schools ne upload kar di है! 🎉")
-        with sub2:
-            st.dataframe(uploaded_df, use_container_width=True)
-
-st.markdown("---")
-
-# ── Download full report ──
-st.markdown("### 📥 Full Report Download")
-excel_data = build_excel(district_data, selected)
-st.download_button(
-    label=f"⬇️ {selected} — Full Report Download (Excel)",
-    data=excel_data,
-    file_name=f"{selected}_ECO_Club_Status.xlsx",
-    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    type="primary"
-)
+        st.markdown("---")
+        st.markdown("**Baaki pending jile:**")
+        for d in pending_districts:
+            if d != pending_sel if 'pending_sel' in dir() else True:
+                st.markdown(f"- {d}")

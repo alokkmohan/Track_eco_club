@@ -154,65 +154,41 @@ def generate_index(summary, generated_time):
     pending_grand  = total_grand - uploaded_grand
     pct_grand      = round(uploaded_grand / total_grand * 100) if total_grand > 0 else 0
 
-    cards = ""
-    for s in sorted(summary, key=lambda x: x["district"]):
+    ready   = sorted([s for s in summary if not s.get("priv_missing")], key=lambda x: x["district"])
+    pending = sorted([s for s in summary if s.get("priv_missing")],     key=lambda x: x["district"])
+
+    # Build JS data object for ready districts
+    js_data_parts = []
+    for s in ready:
         dist = s["district"]
-        priv_missing = s["Private Schools"]["total"] == 0
         total_d    = sum(s[sh]["total"]    for sh in ["Govt Schools","Aided Schools","Private Schools"])
         uploaded_d = sum(s[sh]["uploaded"] for sh in ["Govt Schools","Aided Schools","Private Schools"])
-        pending_d  = total_d - uploaded_d
         pct        = round(uploaded_d / total_d * 100) if total_d > 0 else 0
-        bar_color  = "bg-success" if pct >= 75 else "bg-warning" if pct >= 40 else "bg-danger"
-        fname      = f"reports/{dist}_ECO_Club_Status.xlsx"
+        js_data_parts.append(
+            f'"{dist}":{{'
+            f'file:"reports/{dist}_ECO_Club_Status.xlsx",'
+            f'total:{total_d},uploaded:{uploaded_d},pending:{total_d-uploaded_d},pct:{pct},'
+            f'govt:{{total:{s["Govt Schools"]["total"]},up:{s["Govt Schools"]["uploaded"]},pend:{s["Govt Schools"]["pending"]}}},'
+            f'aided:{{total:{s["Aided Schools"]["total"]},up:{s["Aided Schools"]["uploaded"]},pend:{s["Aided Schools"]["pending"]}}},'
+            f'pvt:{{total:{s["Private Schools"]["total"]},up:{s["Private Schools"]["uploaded"]},pend:{s["Private Schools"]["pending"]}}}'
+            f'}}'
+        )
+    js_data = "{" + ",".join(js_data_parts) + "}"
 
-        rows = ""
-        for sh, icon in [("Govt Schools","🏛️"), ("Aided Schools","🤝"), ("Private Schools","🏫")]:
-            t = s[sh]["total"]; u = s[sh]["uploaded"]; p = s[sh]["pending"]
-            if sh == "Private Schools" and priv_missing:
-                rows += f"""<tr class="table-warning">
-              <td>{icon} Private</td>
-              <td colspan="3" class="text-center text-warning fw-bold small">⚠️ List pending</td>
-            </tr>"""
-            else:
-                rows += f"""<tr>
-              <td>{icon} {sh.replace(' Schools','')}</td>
-              <td class="text-center">{t}</td>
-              <td class="text-center fw-bold text-success">{u}</td>
-              <td class="text-center text-danger">{p}</td>
-            </tr>"""
+    # Dropdown options for ready districts
+    ready_options = "\n".join(
+        f'      <option value="{s["district"]}">{s["district"]}</option>' for s in ready
+    )
 
-        priv_badge = ' <span class="badge bg-warning text-dark ms-1" title="Private school list not yet added">⚠️ Pvt</span>' if priv_missing else ""
-
-        cards += f"""
-        <div class="col-xl-4 col-md-6 mb-4 district-card" data-name="{dist.lower()}">
-          <div class="card h-100 shadow-sm border-0">
-            <div class="card-header text-white fw-bold d-flex justify-content-between align-items-center" style="background:#1F4E79;border-radius:12px 12px 0 0">
-              <span>📍 {dist}</span>{priv_badge}
-            </div>
-            <div class="card-body pb-2">
-              <div class="d-flex justify-content-between mb-1">
-                <small class="text-muted">{uploaded_d} / {total_d} uploaded</small>
-                <small class="fw-bold">{pct}%</small>
-              </div>
-              <div class="progress mb-3" style="height:8px;border-radius:4px">
-                <div class="{bar_color} progress-bar" style="width:{pct}%"></div>
-              </div>
-              <table class="table table-sm table-borderless mb-0 small">
-                <thead><tr>
-                  <th></th>
-                  <th class="text-center text-muted">Total</th>
-                  <th class="text-center text-success">✅</th>
-                  <th class="text-center text-danger">❌</th>
-                </tr></thead>
-                <tbody>{rows}</tbody>
-              </table>
-            </div>
-            <div class="card-footer bg-white border-0 pt-0">
-              <a href="{fname}" class="btn btn-success btn-sm w-100 fw-bold" download>
-                ⬇️ Report Download करें
-              </a>
-            </div>
-          </div>
+    # Pending district rows
+    pending_rows = ""
+    for s in pending:
+        dist = s["district"]
+        tmpl = f"reports/templates/{dist}_Private_Template.xlsx"
+        pending_rows += f"""
+        <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+          <span class="fw-semibold">📍 {dist}</span>
+          <a href="{tmpl}" class="btn btn-outline-warning btn-sm" download>📥 Template</a>
         </div>"""
 
     html = f"""<!DOCTYPE html>
@@ -223,52 +199,124 @@ def generate_index(summary, generated_time):
   <title>ECO Club — District Reports</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
-    body {{ background:#f0f4f8; font-family: 'Segoe UI', sans-serif; }}
-    .hero {{ background: linear-gradient(135deg, #0d3320, #1a6644); color:#fff; padding:2.5rem 0 2rem; }}
+    body {{ background:#f0f4f8; font-family:'Segoe UI',sans-serif; }}
+    .hero {{ background:linear-gradient(135deg,#0d3320,#1a6644); color:#fff; padding:2.5rem 0 2rem; }}
     .stat-box {{ background:rgba(255,255,255,.15); border-radius:10px; padding:.8rem 1.4rem; min-width:110px; }}
-    .card {{ border-radius:12px; }}
-    #searchBox {{ border-radius:25px; padding-left:1.2rem; max-width:420px; }}
+    .card {{ border-radius:12px; border:none; }}
     .progress {{ background:#dee2e6; }}
+    #distSelect {{ border-radius:10px; font-size:1.05rem; }}
+    #distCard {{ transition: all .2s; }}
+    .pending-panel {{ border-left:4px solid #ffc107; }}
   </style>
 </head>
 <body>
+
 <div class="hero">
   <div class="container text-center">
     <h1 class="fw-bold mb-1">🌿 ECO Club</h1>
-    <p class="lead mb-3">UP Board Secondary Schools — Notification Upload Status</p>
+    <p class="lead mb-2">UP Board Secondary Schools — Notification Upload Status</p>
     <div class="d-flex flex-wrap justify-content-center gap-3 mb-3">
       <div class="stat-box"><div class="fs-4 fw-bold">{total_grand}</div><div class="small">Total Schools</div></div>
       <div class="stat-box" style="background:rgba(40,167,69,.5)"><div class="fs-4 fw-bold">{uploaded_grand}</div><div class="small">Uploaded ✅</div></div>
       <div class="stat-box" style="background:rgba(220,53,69,.5)"><div class="fs-4 fw-bold">{pending_grand}</div><div class="small">Pending ❌</div></div>
       <div class="stat-box"><div class="fs-4 fw-bold">{pct_grand}%</div><div class="small">Completion</div></div>
     </div>
-    <div class="small opacity-75">Last updated: {generated_time}</div>
+    <div class="small opacity-75">Last updated: {generated_time} &nbsp;|&nbsp; {len(ready)} districts ready &nbsp;|&nbsp; {len(pending)} private list pending</div>
   </div>
 </div>
 
 <div class="container py-4">
-  <div class="d-flex justify-content-center mb-4">
-    <input id="searchBox" type="text" class="form-control form-control-lg shadow-sm"
-           placeholder="🔍 अपना जिला खोजें..." oninput="filterDistricts(this.value)">
+  <div class="row g-4">
+
+    <!-- LEFT: Ready districts -->
+    <div class="col-lg-7">
+      <div class="card shadow-sm h-100">
+        <div class="card-header fw-bold text-white" style="background:#1F4E79;border-radius:12px 12px 0 0">
+          ✅ Report Ready Districts ({len(ready)})
+        </div>
+        <div class="card-body">
+          <label class="form-label fw-semibold mb-1">अपना जिला चुनें</label>
+          <select id="distSelect" class="form-select form-select-lg mb-3" onchange="showDist(this.value)">
+            <option value="">-- जिला चुनें --</option>
+{ready_options}
+          </select>
+
+          <div id="distCard" class="d-none">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <span id="dLabel" class="fw-bold fs-5"></span>
+              <span id="dPct" class="badge fs-6"></span>
+            </div>
+            <div class="progress mb-3" style="height:10px;border-radius:5px">
+              <div id="dBar" class="progress-bar" style="width:0%"></div>
+            </div>
+            <table class="table table-sm table-bordered mb-3">
+              <thead class="table-light"><tr>
+                <th></th><th class="text-center">Total</th>
+                <th class="text-center text-success">✅ Uploaded</th>
+                <th class="text-center text-danger">❌ Pending</th>
+              </tr></thead>
+              <tbody>
+                <tr><td>🏛️ Govt</td><td id="gT" class="text-center"></td><td id="gU" class="text-center text-success fw-bold"></td><td id="gP" class="text-center text-danger"></td></tr>
+                <tr><td>🤝 Aided</td><td id="aT" class="text-center"></td><td id="aU" class="text-center text-success fw-bold"></td><td id="aP" class="text-center text-danger"></td></tr>
+                <tr><td>🏫 Private</td><td id="pT" class="text-center"></td><td id="pU" class="text-center text-success fw-bold"></td><td id="pP" class="text-center text-danger"></td></tr>
+              </tbody>
+            </table>
+            <a id="dBtn" href="#" class="btn btn-success w-100 fw-bold" download>
+              ⬇️ Report Download करें
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Pending districts -->
+    <div class="col-lg-5">
+      <div class="card shadow-sm h-100 pending-panel">
+        <div class="card-header fw-bold bg-warning text-dark" style="border-radius:12px 12px 0 0">
+          ⚠️ Private List Pending ({len(pending)})
+        </div>
+        <div class="card-body">
+          <p class="text-muted small mb-3">
+            इन जिलों की Private School list अभी upload नहीं हुई।<br>
+            Template download करें → भरें → Admin को भेजें।
+          </p>
+          {pending_rows if pending_rows else '<p class="text-success fw-bold">सभी जिलों की private list उपलब्ध है! 🎉</p>'}
+        </div>
+      </div>
+    </div>
+
   </div>
-  <div class="row" id="grid">{cards}</div>
-  <p id="noResult" class="text-center text-muted d-none mt-4">कोई जिला नहीं मिला।</p>
 </div>
 
-<footer class="text-center py-3 text-muted small">
-  ECO Club — UP Board Secondary Schools &nbsp;|&nbsp; Data auto-updated on push
+<footer class="text-center py-3 text-muted small mt-2">
+  ECO Club — UP Board Secondary Schools &nbsp;|&nbsp; Auto-updated on data push
 </footer>
 
 <script>
-function filterDistricts(q) {{
-  q = q.toLowerCase();
-  let visible = 0;
-  document.querySelectorAll('.district-card').forEach(c => {{
-    const show = c.dataset.name.includes(q);
-    c.style.display = show ? '' : 'none';
-    if (show) visible++;
-  }});
-  document.getElementById('noResult').classList.toggle('d-none', visible > 0);
+const DATA = {js_data};
+function showDist(name) {{
+  const card = document.getElementById('distCard');
+  if (!name) {{ card.classList.add('d-none'); return; }}
+  const d = DATA[name];
+  const barColor = d.pct >= 75 ? 'bg-success' : d.pct >= 40 ? 'bg-warning' : 'bg-danger';
+  const badgeColor = d.pct >= 75 ? 'bg-success' : d.pct >= 40 ? 'bg-warning text-dark' : 'bg-danger';
+  document.getElementById('dLabel').textContent = '📍 ' + name;
+  document.getElementById('dPct').textContent = d.pct + '%';
+  document.getElementById('dPct').className = 'badge fs-6 ' + badgeColor;
+  document.getElementById('dBar').style.width = d.pct + '%';
+  document.getElementById('dBar').className = 'progress-bar ' + barColor;
+  document.getElementById('gT').textContent = d.govt.total;
+  document.getElementById('gU').textContent = d.govt.up;
+  document.getElementById('gP').textContent = d.govt.pend;
+  document.getElementById('aT').textContent = d.aided.total;
+  document.getElementById('aU').textContent = d.aided.up;
+  document.getElementById('aP').textContent = d.aided.pend;
+  document.getElementById('pT').textContent = d.pvt.total;
+  document.getElementById('pU').textContent = d.pvt.up;
+  document.getElementById('pP').textContent = d.pvt.pend;
+  document.getElementById('dBtn').href = d.file;
+  document.getElementById('dBtn').textContent = '⬇️ ' + name + ' — Report Download करें';
+  card.classList.remove('d-none');
 }}
 </script>
 </body>
@@ -277,10 +325,22 @@ function filterDistricts(q) {{
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(html)
 
+
+def make_template(dist_label):
+    df = pd.DataFrame(columns=['District Name', 'Block Name', 'School Name', 'UDISE Code', 'Board', 'Managed By'])
+    output = io.BytesIO()
+    with pd.ExcelWriter(output, engine='openpyxl') as writer:
+        df.to_excel(writer, index=False, sheet_name='Private Schools')
+    output.seek(0)
+    return output.read()
+
+
 def main():
     print("Loading data files...")
     notifications_df = load_notifications()
     secondary_data   = load_secondary_list()
+
+    os.makedirs("reports/templates", exist_ok=True)
 
     summary = []
     for dist_label in sorted(DISTRICTS.keys()):
@@ -288,8 +348,7 @@ def main():
         district_data = get_district_data(notifications_df, secondary_data, dist_label)
         excel_bytes   = build_excel(district_data)
 
-        fname = f"reports/{dist_label}_ECO_Club_Status.xlsx"
-        with open(fname, "wb") as f:
+        with open(f"reports/{dist_label}_ECO_Club_Status.xlsx", "wb") as f:
             f.write(excel_bytes.read())
 
         stats = {"district": dist_label}
@@ -298,6 +357,14 @@ def main():
             total    = len(df)
             uploaded = int((df['Upload Status'] == 'Uploaded').sum())
             stats[sheet] = {"total": total, "uploaded": uploaded, "pending": total - uploaded}
+
+        stats["priv_missing"] = (stats["Private Schools"]["total"] == 0)
+        if stats["priv_missing"]:
+            tmpl_bytes = make_template(dist_label)
+            with open(f"reports/templates/{dist_label}_Private_Template.xlsx", "wb") as f:
+                f.write(tmpl_bytes)
+            print(f"    -> template saved (private list missing)")
+
         summary.append(stats)
 
     generated_time = datetime.utcnow().strftime("%d %b %Y, %H:%M UTC")
