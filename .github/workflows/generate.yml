@@ -1,0 +1,38 @@
+name: Generate District Reports
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'data/All_Schools_with_Notifications_UP.xlsx'
+      - 'data/Final_Secondary_School_List.xlsx'
+      - 'generate_reports.py'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install pandas openpyxl
+
+      - name: Generate all district reports
+        run: python generate_reports.py
+
+      - name: Commit and push reports
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add reports/ index.html
+          git diff --staged --quiet || (git commit -m "Auto-generate district reports [skip ci]" && git push)
