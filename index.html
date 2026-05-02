@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ECO Club — District Reports</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background:#f0f4f8; font-family: 'Segoe UI', sans-serif; }
+    .hero { background: linear-gradient(135deg, #0d3320, #1a6644); color:#fff; padding:2.5rem 0 2rem; }
+    .stat-box { background:rgba(255,255,255,.15); border-radius:10px; padding:.8rem 1.4rem; min-width:110px; }
+    .card { border-radius:12px; }
+    #searchBox { border-radius:25px; padding-left:1.2rem; max-width:420px; }
+    .progress { background:#dee2e6; }
+  </style>
+</head>
+<body>
+<div class="hero">
+  <div class="container text-center">
+    <h1 class="fw-bold mb-1">🌿 ECO Club</h1>
+    <p class="lead mb-3">UP Board Secondary Schools — Notification Upload Status</p>
+    <div class="d-flex flex-wrap justify-content-center gap-3 mb-3">
+      <div class="stat-box"><div class="fs-4 fw-bold">10295</div><div class="small">Total Schools</div></div>
+      <div class="stat-box" style="background:rgba(40,167,69,.5)"><div class="fs-4 fw-bold">5001</div><div class="small">Uploaded ✅</div></div>
+      <div class="stat-box" style="background:rgba(220,53,69,.5)"><div class="fs-4 fw-bold">5294</div><div class="small">Pending ❌</div></div>
+      <div class="stat-box"><div class="fs-4 fw-bold">49%</div><div class="small">Completion</div></div>
+    </div>
+    <div class="small opacity-75">Last updated: 02 May 2026, 13:55 UTC</div>
+  </div>
+</div>
+
+<div class="container py-4">
+  <div class="d-flex justify-content-center mb-4">
+    <input id="searchBox" type="text" class="form-control form-control-lg shadow-sm"
+           placeholder="🔍 अपना जिला खोजें..." oninput="filterDistricts(this.value)">
+  </div>
+  <div class="row" id="grid">
+        <div class="col-xl-4 col-md-6 mb-4 district-card" data-name="amethi">
+          <div class="card h-100 shadow-sm border-0">
+            <div class="card-header text-white fw-bold" style="background:#1F4E79;border-radius:12px 12px 0 0">
+              📍 Amethi
+            </div>
+            <div class="card-body pb-2">
+              <div class="d-flex justify-content-between mb-1">
+                <small class="text-muted">138 / 242 uploaded</small>
+                <small class="fw-bold">57%</small>
+              </div>
+              <div class="progress mb-3" style="height:8px;border-radius:4px">
+                <div class="bg-warning progress-bar" style="width:57%"></div>
+              </div>
+              <table class="table table-sm table-borderless mb-0 small">
+                <thead><tr>
+                  <th></th>
+                  <th class="text-center text-muted">Total</th>
+                  <th class="text-center text-success">✅</th>
+                  <th class="text-center text-danger">❌</th>
+                </tr></thead>
+                <tbody><tr>
+              <td>🏛️ Govt</td>
+              <td class="text-center">37</td>
+              <td class="text-center fw-bold text-success">36</td>
+              <td class="text-center text-danger">1</td>
+            </tr><tr>
+              <td>🤝 Aided</td>
+              <td class="text-center">25</td>
+              <td class="text-center fw-bold text-success">19</td>
+              <td class="text-center text-danger">6</td>
+            </tr><tr>
+              <td>🏫 Private</td>
+              <td class="text-center">180</td>
+              <td class="text-center fw-bold text-success">83</td>
+              <td class="text-center text-danger">97</td>
+            </tr></tbody>
+              </table>
+            </div>
+            <div class="card-footer bg-white border-0 pt-0">
+              <a href="reports/Amethi_ECO_Club_Status.xlsx" class="btn btn-success btn-sm w-100 fw-bold" download>
+                ⬇️ Report Download करें
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-4 col-md-6 mb-4 district-card" data-name="amroha">
+          <div class="card h-100 shadow-sm border-0">
+            <div class="card-header text-white fw-bold" style="background:#1F4E79;border-radius:12px 12px 0 0">
+              📍 Amroha
+            </div>
+            <div class="card-body pb-2">
+              <div class="d-flex justify-content-between mb-1">
+                <small class="text-muted">199 / 336 uploaded</small>
+                <small class="fw-bold">59%</small>
+              </div>
+              <div class="progress mb-3" style="height:8px;border-radius:4px">
+                <div class="bg-warning progress-bar" style="width:59%"></div>
+              </div>
+              <table class="table table-sm table-borderless mb-0 small">
+                <thead><tr>
+                  <th></th>
+                  <th class="text-center text-muted">Total</th>
+                  <th class="text-center text-success">✅</th>
+                  <th class="text-center text-danger">❌</th>
+                </tr></thead>
+                <tbody><tr>
+              <td>🏛️ Govt</td>
+              <td class="text-center">25</td>
+              <td class="text-center fw-bold text-success">25</td>
+              <td class="text-center text-danger">0</td>
+            </tr><tr>
+              <td>🤝 Aided</td>
+              <td class="text-center">33</td>
+              <td class="text-center fw-bold text-success">33</td>
+              <td class="text-center text-danger">0</td>
+            </tr><tr>
+              <td>🏫 Private</td>
+              <td class="text-center">278</td>
+              <td class="text-center fw-bold text-success">141</td>
+              <td class="text-center text-danger">137</td>
+            </tr></tbody>
+              </table>
+            </div>
+            <div class="card-footer bg-white border-0 pt-0">
+              <a href="reports/Amroha_ECO_Club_Status.xlsx" class="btn btn-success btn-sm w-100 fw-bold" download>
+                ⬇️ Report Download करें
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-4 col-md-6 mb-4 district-card" data-name="auraiya">
+          <div class="card h-100 shadow-sm border-0">
+            <div class="card-header text-white fw-bold" style="background:#1F4E79;border-radius:12px 12px 0 0">
+              📍 Auraiya
+            </div>
+            <div class="card-body pb-2">
+              <div class="d-flex justify-content-between mb-1">
+                <small class="text-muted">165 / 295 uploaded</small>
+                <small class="fw-bold">56%</small>
+              </div>
+              <div class="progress mb-3" style="height:8px;border-radius:4px">
+                <div class="bg-warning progress-bar" style="width:56%"></div>
+              </div>
+              <table class="table table-sm table-borderless mb-0 small">
+                <thead><tr>
+                  <th></th>
+                  <th class="text-center text-muted">Total</th>
+                  <th class="text-center text-success">✅</th>
+                  <th class="text-center text-danger">❌</th>
+                </tr></thead>
+                <tbody><tr>
+              <td>🏛️ Govt</td>
+              <td class="text-center">15</td>
+              <td class="text-center fw-bold text-success">15</td>
+              <td class="text-center text-danger">0</td>
+            </tr><tr>
+              <td>🤝 Aided</td>
+              <td class="text-center">60</td>
+              <td class="text-center fw-bold text-success">59</td>
+              <td class="text-center text-danger">1</td>
+            </tr><tr>
+              <td>🏫 Private</td>
+              <td class="text-center">220</td>
+              <td class="text-center fw-bold text-success">91</td>
+              <td class="text-center text-danger">129</td>
+            </tr></tbody>
+              </table>
+            </div>
+            <div class="card-footer bg-white border-0 pt-0">
+              <a href="reports/Auraiya_ECO_Club_Status.xlsx" class="btn btn-success btn-sm w-100 fw-bold" download>
+                ⬇️ Report Download करें
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-4 col-md-6 mb-4 district-card" data-name="azamgarh">
+          <div class="card h-100 shadow-sm border-0">
+            <div class="card-header text-white fw-bold" style="background:#1F4E79;border-radius:12px 12px 0 0">
+              📍 Azamgarh
+            </div>
+            <div class="card-body pb-2">
+              <div class="d-flex justify-content-between mb-1">
+                <small class="text-muted">185 / 826 uploaded</small>
+                <small class="fw-bold">22%</small>
+              </div>
+              <div class="progress mb-3" style="height:8px;border-radius:4px">
+                <div class="bg-danger progress-bar" style="width:22%"></div>
+              </div>
+              <table class="table table-sm table-borderless mb-0 small">
+                <thead><tr>
+                  <th></th>
+                  <th class="text-center text-muted">Total</th>
+                  <th class="text-center text-success">✅</th>
+                  <th class="text-center text-danger">❌</th>
+                </tr></thead>
+                <tbody><tr>
+              <td>🏛️ Govt</td>
+              <td class="text-center">28</td>
+              <td class="text-center fw-bold text-success">28</td>
+              <td class="text-center text-danger">0</td>
+            </tr><tr>
+              <td>🤝 Aided</td>
+              <td class="text-center">97</td>
+              <td class="text-center fw-bold text-success">61</td>
+              <td class="text-center text-danger">36</td>
+            </tr><tr>
+              <td>🏫 Private</td>
+              <td class="text-center">701</td>
+              <td class="text-center fw-bold text-success">96</td>
+              <td class="text-center text-danger">605</td>
+            </tr></tbody>
+              </table>
+            </div>
+            <div class="card-footer bg-white border-0 pt-0">
+              <a href="reports/Azamgarh_ECO_Club_Status.xlsx" class="btn btn-success btn-sm w-100 fw-bold" download>
+                ⬇️ Report Download करें
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-4 col-md-6 mb-4 district-card" data-name="ballia">
+          <div class="card h-100 shadow-sm border-0">
+            <div class="card-header text-white fw-bold" style="background:#1F4E79;border-radius:12px 12px 0 0">
+              📍 Ballia
+            </div>
+            <div class="card-body pb-2">
+              <div class="d-flex justify-content-between mb-1">
+                <small class="text-muted">235 / 532 uploaded</small>
+                <small class="fw-bold">44%</small>
+              </div>
+              <div class="progress mb-3" style="height:8px;border-radius:4px">
+                <div class="bg-warning progress-bar" style="width:44%"></div>
+              </div>
+              <table class="table table-sm table-borderless mb-0 small">
+                <thead><tr>
+                  <th></th>
+                  <th class="text-center text-muted">Total</th>
+                  <th class="text-center text-success">✅</th>
+                  <th class="text-center text-danger">❌</th>
+                </tr></thead>
+                <tbody><tr>
+              <td>🏛️ Govt</td>
+              <td class="text-center">34</td>
+              <td class="text-center fw-bold text-success">34</td>
+              <td class="text-center text-danger">0</td>
+            </tr><tr>
+              <td>🤝 Aided</td>
+              <td class="text-center">91</td>
+              <td class="text-center fw-bold text-success">74</td>
+              <td class="text-center text-danger">17</td>
+            </tr><tr>
+              <td>🏫 Private</td>
+              <td class="text-center">407</td>
+              <td class="text-center fw-bold text-success">127</td>
+              <td class="text-center text-danger">280</td>
+            </tr></tbody>
+              </table>
+            </div>
+            <div class="card-footer bg-white border-0 pt-0">
+              <a href="reports/Ballia_ECO_Club_Status.xlsx" class="btn btn-success btn-sm w-100 fw-bold" download>
+                ⬇️ Report Download करें
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-4 col-md-6 mb-4 district-card" data-name="bareilly">
+          <div class="card h-100 shadow-sm border-0">
+            <div class="card-header text-white fw-bold" style="background:#1F4E79;border-radius:12px 12px 0 0">
+              📍 Bareilly
+            </div>
+            <div class="card-body pb-2">
+              <div class="d-flex justify-content-between mb-1">
+                <small class="text-muted">287 / 454 uploaded</small>
+                <small class="fw-bold">63%</small>
+              </div>
+              <div class="progress mb-3" style="height:8px;border-radius:4px">
+                <div class="bg-warning progress-bar" style="width:63%"></div>
+              </div>
+              <table class="table table-sm table-borderless mb-0 small">
+                <thead><tr>
+                  <th></th>
+                  <th class="text-center text-muted">Total</th>
+                  <th class="text-center text-success">✅</th>
+                  <th class="text-center text-danger">❌</th>
+                </tr></thead>
+                <tbody><tr>
+              <td>🏛️ Govt</td>
+              <td class="text-center">67</td>
+              <td class="text-center fw-bold text-success">67</td>
+              <td class="text-center text-danger">0</td>
+            </tr><tr>
+              <td>🤝 Aided</td>
+              <td class="text-center">78</td>
+              <td class="text-center fw-bold text-success">76</td>
+              <td class="text-center text-danger">2</td>
+            </tr><tr>
+              <td>🏫 Private</td>
+              <td class="text-center">309</td>
+              <td class="text-center fw-bold text-success">144</td>
+              <td class="text-center text-danger">165</td>
+            </tr></tbody>
+              </table>
+            </div>
+            <div class="card-footer bg-white border-0 pt-0">
+              <a href="reports/Bareilly_ECO_Club_Status.xlsx" class="btn btn-success btn-sm w-100 fw-bold" download>
+                ⬇️ Report Download करें
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-4 col-md-6 mb-4 district-card" data-name="basti">
+          <div class="card h-100 shadow-sm border-0">
+            <div class="card-header text-white fw-bold" style="background:#1F4E79;border-radius:12px 12px 0 0">
+              📍 Basti
+            </div>
+            <div class="card-body pb-2">
+              <div class="d-flex justify-content-between mb-1">
+                <small class="text-muted">172 / 388 uploaded</small>
+                <small class="fw-bold">44%</small>
+              </div>
+              <div class="progress mb-3" style="height:8px;border-radius:4px">
+                <div class="bg-warning progress-bar" style="width:44%"></div>
+              </div>
+              <table class="table table-sm table-borderless mb-0 small">
+                <thead><tr>
+                  <th></th>
+                  <th class="text-center text-muted">Total</th>
+                  <th class="text-center text-success">✅</th>
+                  <th class="text-center text-danger">❌</th>
+                </tr></thead>
+                <tbody><tr>
+              <td>🏛️ Govt</td>
+              <td class="text-center">23</td>
+              <td class="text-center fw-bold text-success">23</td>
+              <td class="text-center text-danger">0</td>
+            </tr><tr>
+              <td>🤝 Aided</td>
+              <td class="text-center">70</td>
+              <td class="text-center fw-bold text-success">55</td>
+              <td class="text-center text-danger">15</td>
+            </tr><tr>
+              <td>🏫 Private</td>
+              <td class="text-center">295</td>
+              <td class="text-center fw-bold text-success">94</td>
+              <td class="text-center text-danger">201</td>
+            </tr></tbody>
+              </table>
+            </div>
+            <div class="card-footer bg-white border-0 pt-0">
+              <a href="reports/Basti_ECO_Club_Status.xlsx" class="btn btn-success btn-sm w-100 fw-bold" download>
+                ⬇️ Report Download करें
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-4 col-md-6 mb-4 district-card" data-name="bhadohi">
+          <div class="card h-100 shadow-sm border-0">
+            <div class="card-header text-white fw-bold" style="background:#1F4E79;border-radius:12px 12px 0 0">
+              📍 Bhadohi
+            </div>
+            <div class="card-body pb-2">
+              <div class="d-flex justify-content-between mb-1">
+                <small class="text-muted">146 / 190 uploaded</small>
+                <small class="fw-bold">77%</small>
+              </div>
+              <div class="progress mb-3" style="height:8px;border-radius:4px">
+                <div class="bg-success progress-bar" style="width:77%"></div>
+              </div>
+              <table class="table table-sm table-borderless mb-0 small">
+                <thead><tr>
+                  <th></th>
+                  <th class="text-center text-muted">Total</th>
+                  <th class="text-center text-success">✅</th>
+                  <th class="text-center text-danger">❌</th>
+                </tr></thead>
+                <tbody><tr>
+              <td>🏛️ Govt</td>
+              <td class="text-center">41</td>
+              <td class="text-center fw-bold text-success">39</td>
+              <td class="text-center text-danger">2</td>
+            </tr><tr>
+              <td>🤝 Aided</td>
+              <td class="text-center">25</td>
+              <td class="text-center fw-bold text-success">25</td>
+              <td class="text-center text-danger">0</td>
+            </tr><tr>
+              <td>🏫 Private</td>
+              <td class="text-center">124</td>
+              <td class="text-center fw-bold text-success">82</td>
+              <td class="text-center text-danger">42</td>
+            </tr></tbody>
+              </table>
+            </div>
+            <div class="card-footer bg-white border-0 pt-0">
+              <a href="reports/Bhadohi_ECO_Club_Status.xlsx" class="btn btn-success btn-sm w-100 fw-bold" download>
+                ⬇️ Report Download करें
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-4 col-md-6 mb-4 district-card" data-name="bulandshahr">
+          <div class="card h-100 shadow-sm border-0">
+            <div class="card-header text-white fw-bold" style="background:#1F4E79;border-radius:12px 12px 0 0">
+              📍 Bulandshahr
+            </div>
+            <div class="card-body pb-2">
+              <div class="d-flex justify-content-between mb-1">
+                <small class="text-muted">224 / 425 uploaded</small>
+                <small class="fw-bold">53%</small>
+              </div>
+              <div class="progress mb-3" style="height:8px;border-radius:4px">
+                <div class="bg-warning progress-bar" style="width:53%"></div>
+              </div>
+              <table class="table table-sm table-borderless mb-0 small">
+                <thead><tr>
+                  <th></th>
+                  <th class="text-center text-muted">Total</th>
+                  <th class="text-center text-success">✅</th>
+                  <th class="text-center text-danger">❌</th>
+                </tr></thead>
+                <tbody><tr>
+              <td>🏛️ Govt</td>
+              <td class="text-center">52</td>
+              <td class="text-center fw-bold text-success">52</td>
+              <td class="text-center text-danger">0</td>
+            </tr><tr>
+              <td>🤝 Aided</td>
+              <td class="text-center">153</td>
+              <td class="text-center fw-bold text-success">127</td>
+              <td class="text-center text-danger">26</td>
+            </tr><tr>
+              <td>🏫 Private</td>
+              <td class="text-center">220</td>
+              <td class="text-center fw-bold text-success">45</td>
+              <td class="text-center text-danger">175</td>
+            </tr></tbody>
+              </table>
+            </div>
+            <div class="card-footer bg-white border-0 pt-0">
+              <a href="reports/Bulandshahr_ECO_Club_Status.xlsx" class="btn btn-success btn-sm w-100 fw-bold" download>
+                ⬇️ Report Download करें
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-4 col-md-6 mb-4 district-card" data-name="chandauli">
+          <div class="card h-100 shadow-sm border-0">
+            <div class="card-header text-white fw-bold" style="background:#1F4E79;border-radius:12px 12px 0 0">
+              📍 Chandauli
+            </div>
+            <div class="card-body pb-2">
+              <div class="d-flex justify-content-between mb-1">
+                <small class="text-muted">184 / 245 uploaded</small>
+                <small class="fw-bold">75%</small>
+              </div>
+              <div class="progress mb-3" style="height:8px;border-radius:4px">
+                <div class="bg-success progress-bar" style="width:75%"></div>
+              </div>
+              <table class="table table-sm table-borderless mb-0 small">
+                <thead><tr>
+                  <th></th>
+                  <th class="text-center text-muted">Total</th>
+                  <th class="text-center text-success">✅</th>
+                  <th class="text-center text-danger">❌</th>
+                </tr></thead>
+                <tbody><tr>
+              <td>🏛️ Govt</td>
+              <td class="text-center">27</td>
+              <td class="text-center fw-bold text-success">27</td>
+              <td class="text-center text-danger">0</td>
+            </tr><tr>
+              <td>🤝 Aided</td>
+              <td class="text-center">34</td>
+              <td class="text-center fw-bold text-success">34</td>
+              <td class="text-center text-danger">0</td>
+            </tr><tr>
+              <td>🏫 Private</td>
+              <td class="text-center">184</td>
+              <td class="text-center fw-bold text-success">123</td>
+              <td class="text-center text-danger">61</td>
+            </tr></tbody>
+              </table>
+            </div>
+            <div class="card-footer bg-white border-0 pt-0">
+              <a href="reports/Chandauli_ECO_Club_Status.xlsx" class="btn btn-success btn-sm w-100 fw-bold" download>
+                ⬇️ Report Download करें
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-4 col-md-6 mb-4 district-card" data-name="etawah">
+          <div class="card h-100 shadow-sm border-0">
+            <div class="card-header text-white fw-bold" style="background:#1F4E79;border-radius:12px 12px 0 0">
+              📍 Etawah
+            </div>
+            <div class="card-body pb-2">
+              <div class="d-flex justify-content-between mb-1">
+                <small class="text-muted">85 / 282 uploaded</small>
+                <small class="fw-bold">30%</small>
+              </div>
+              <div class="progress mb-3" style="height:8px;border-radius:4px">
+                <div class="bg-danger progress-bar" style="width:30%"></div>
+              </div>
+              <table class="table table-sm table-borderless mb-0 small">
+                <thead><tr>
+                  <th></th>
+                  <th class="text-center text-muted">Total</th>
+                  <th class="text-center text-success">✅</th>
+                  <th class="text-center text-danger">❌</th>
+                </tr></thead>
+                <tbody><tr>
+              <td>🏛️ Govt</td>
+              <td class="text-center">21</td>
+              <td class="text-center fw-bold text-success">21</td>
+              <td class="text-center text-danger">0</td>
+            </tr><tr>
+              <td>🤝 Aided</td>
+              <td class="text-center">54</td>
+              <td class="text-center fw-bold text-success">38</td>
+              <td class="text-center text-danger">16</td>
+            </tr><tr>
+              <td>🏫 Private</td>
+              <td class="text-center">207</td>
+              <td class="text-center fw-bold text-success">26</td>
+              <td class="text-center text-danger">181</td>
+            </tr></tbody>
+              </table>
+            </div>
+            <div class="card-footer bg-white border-0 pt-0">
+              <a href="reports/Etawah_ECO_Club_Status.xlsx" class="btn btn-success btn-sm w-100 fw-bold" download>
+                ⬇️ Report Download करें
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-4 col-md-6 mb-4 district-card" data-name="farrukhabad">
+          <div class="card h-100 shadow-sm border-0">
+            <div class="card-header text-white fw-bold" style="background:#1F4E79;border-radius:12px 12px 0 0">
+              📍 Farrukhabad
+            </div>
+            <div class="card-body pb-2">
+              <div class="d-flex justify-content-between mb-1">
+                <small class="text-muted">156 / 280 uploaded</small>
+                <small class="fw-bold">56%</small>
+              </div>
+              <div class="progress mb-3" style="height:8px;border-radius:4px">
+                <div class="bg-warning progress-bar" style="width:56%"></div>
+              </div>
+              <table class="table table-sm table-borderless mb-0 small">
+                <thead><tr>
+                  <th></th>
+                  <th class="text-center text-muted">Total</th>
+                  <th class="text-center text-success">✅</th>
+                  <th class="text-center text-danger">❌</th>
+                </tr></thead>
+                <tbody><tr>
+              <td>🏛️ Govt</td>
+              <td class="text-center">10</td>
+              <td class="text-center fw-bold text-success">10</td>
+              <td class="text-center text-danger">0</td>
+            </tr><tr>
+              <td>🤝 Aided</td>
+              <td class="text-center">63</td>
+              <td class="text-center fw-bold text-success">62</td>
+              <td class="text-center text-danger">1</td>
+            </tr><tr>
+              <td>🏫 Private</td>
+              <td class="text-center">207</td>
+              <td class="text-center fw-bold text-success">84</td>
+              <td class="text-center text-danger">123</td>
+            </tr></tbody>
+              </table>
+            </div>
+            <div class="card-footer bg-white border-0 pt-0">
+              <a href="reports/Farrukhabad_ECO_Club_Status.xlsx" class="btn btn-success btn-sm w-100 fw-bold" download>
+                ⬇️ Report Download करें
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-4 col-md-6 mb-4 district-card" data-name="gonda">
+          <div class="card h-100 shadow-sm border-0">
+            <div class="card-header text-white fw-bold" style="background:#1F4E79;border-radius:12px 12px 0 0">
+              📍 Gonda
+            </div>
+            <div class="card-body pb-2">
+              <div class="d-flex justify-content-between mb-1">
+                <small class="text-muted">189 / 507 uploaded</small>
+                <small class="fw-bold">37%</small>
+              </div>
+              <div class="progress mb-3" style="height:8px;border-radius:4px">
+                <div class="bg-danger progress-bar" style="width:37%"></div>
+              </div>
+              <table class="table table-sm table-borderless mb-0 small">
+                <thead><tr>
+                  <th></th>
+                  <th class="text-center text-muted">Total</th>
+                  <th class="text-center text-success">✅</th>
+                  <th class="text-center text-danger">❌</th>
+                </tr></thead>
+                <tbody><tr>
+              <td>🏛️ Govt</td>
+              <td class="text-center">26</td>
+              <td class="text-center fw-bold text-success">26</td>
+              <td class="text-center text-danger">0</td>
+            </tr><tr>
+              <td>🤝 Aided</td>
+              <td class="text-center">46</td>
+              <td class="text-center fw-bold text-success">45</td>
+              <td class="text-center text-danger">1</td>
+            </tr><tr>
+              <td>🏫 Private</td>
+              <td class="text-center">435</td>
+              <td class="text-center fw-bold text-success">118</td>
+              <td class="text-center text-danger">317</td>
+            </tr></tbody>
+              </table>
+            </div>
+            <div class="card-footer bg-white border-0 pt-0">
+              <a href="reports/Gonda_ECO_Club_Status.xlsx" class="btn btn-success btn-sm w-100 fw-bold" download>
+                ⬇️ Report Download करें
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-4 col-md-6 mb-4 district-card" data-name="hapur">
+          <div class="card h-100 shadow-sm border-0">
+            <div class="card-header text-white fw-bold" style="background:#1F4E79;border-radius:12px 12px 0 0">
+              📍 Hapur
+            </div>
+            <div class="card-body pb-2">
+              <div class="d-flex justify-content-between mb-1">
+                <small class="text-muted">98 / 115 uploaded</small>
+                <small class="fw-bold">85%</small>
+              </div>
+              <div class="progress mb-3" style="height:8px;border-radius:4px">
+                <div class="bg-success progress-bar" style="width:85%"></div>
+              </div>
+              <table class="table table-sm table-borderless mb-0 small">
+                <thead><tr>
+                  <th></th>
+                  <th class="text-center text-muted">Total</th>
+                  <th class="text-center text-success">✅</th>
+                  <th class="text-center text-danger">❌</th>
+                </tr></thead>
+                <tbody><tr>
+              <td>🏛️ Govt</td>
+              <td class="text-center">13</td>
+              <td class="text-center fw-bold text-success">13</td>
+              <td class="text-center text-danger">0</td>
+            </tr><tr>
+              <td>🤝 Aided</td>
+              <td class="text-center">45</td>
+              <td class="text-center fw-bold text-success">44</td>
+              <td class="text-center text-danger">1</td>
+            </tr><tr>
+              <td>🏫 Private</td>
+              <td class="text-center">57</td>
+              <td class="text-center fw-bold text-success">41</td>
+              <td class="text-center text-danger">16</td>
+            </tr></tbody>
+              </table>
+            </div>
+            <div class="card-footer bg-white border-0 pt-0">
+              <a href="reports/Hapur_ECO_Club_Status.xlsx" class="btn btn-success btn-sm w-100 fw-bold" download>
+                ⬇️ Report Download करें
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-4 col-md-6 mb-4 district-card" data-name="hardoi">
+          <div class="card h-100 shadow-sm border-0">
+            <div class="card-header text-white fw-bold" style="background:#1F4E79;border-radius:12px 12px 0 0">
+              📍 Hardoi
+            </div>
+            <div class="card-body pb-2">
+              <div class="d-flex justify-content-between mb-1">
+                <small class="text-muted">200 / 554 uploaded</small>
+                <small class="fw-bold">36%</small>
+              </div>
+              <div class="progress mb-3" style="height:8px;border-radius:4px">
+                <div class="bg-danger progress-bar" style="width:36%"></div>
+              </div>
+              <table class="table table-sm table-borderless mb-0 small">
+                <thead><tr>
+                  <th></th>
+                  <th class="text-center text-muted">Total</th>
+                  <th class="text-center text-success">✅</th>
+                  <th class="text-center text-danger">❌</th>
+                </tr></thead>
+                <tbody><tr>
+              <td>🏛️ Govt</td>
+              <td class="text-center">55</td>
+              <td class="text-center fw-bold text-success">55</td>
+              <td class="text-center text-danger">0</td>
+            </tr><tr>
+              <td>🤝 Aided</td>
+              <td class="text-center">72</td>
+              <td class="text-center fw-bold text-success">63</td>
+              <td class="text-center text-danger">9</td>
+            </tr><tr>
+              <td>🏫 Private</td>
+              <td class="text-center">427</td>
+              <td class="text-center fw-bold text-success">82</td>
+              <td class="text-center text-danger">345</td>
+            </tr></tbody>
+              </table>
+            </div>
+            <div class="card-footer bg-white border-0 pt-0">
+              <a href="reports/Hardoi_ECO_Club_Status.xlsx" class="btn btn-success btn-sm w-100 fw-bold" download>
+                ⬇️ Report Download करें
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-4 col-md-6 mb-4 district-card" data-name="hathras">
+          <div class="card h-100 shadow-sm border-0">
+            <div class="card-header text-white fw-bold" style="background:#1F4E79;border-radius:12px 12px 0 0">
+              📍 Hathras
+            </div>
+            <div class="card-body pb-2">
+              <div class="d-flex justify-content-between mb-1">
+                <small class="text-muted">112 / 349 uploaded</small>
+                <small class="fw-bold">32%</small>
+              </div>
+              <div class="progress mb-3" style="height:8px;border-radius:4px">
+                <div class="bg-danger progress-bar" style="width:32%"></div>
+              </div>
+              <table class="table table-sm table-borderless mb-0 small">
+                <thead><tr>
+                  <th></th>
+                  <th class="text-center text-muted">Total</th>
+                  <th class="text-center text-success">✅</th>
+                  <th class="text-center text-danger">❌</th>
+                </tr></thead>
+                <tbody><tr>
+              <td>🏛️ Govt</td>
+              <td class="text-center">24</td>
+              <td class="text-center fw-bold text-success">23</td>
+              <td class="text-center text-danger">1</td>
+            </tr><tr>
+              <td>🤝 Aided</td>
+              <td class="text-center">55</td>
+              <td class="text-center fw-bold text-success">54</td>
+              <td class="text-center text-danger">1</td>
+            </tr><tr>
+              <td>🏫 Private</td>
+              <td class="text-center">270</td>
+              <td class="text-center fw-bold text-success">35</td>
+              <td class="text-center text-danger">235</td>
+            </tr></tbody>
+              </table>
+            </div>
+            <div class="card-footer bg-white border-0 pt-0">
+              <a href="reports/Hathras_ECO_Club_Status.xlsx" class="btn btn-success btn-sm w-100 fw-bold" download>
+                ⬇️ Report Download करें
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-4 col-md-6 mb-4 district-card" data-name="jaunpur">
+          <div class="card h-100 shadow-sm border-0">
+            <div class="card-header text-white fw-bold" style="background:#1F4E79;border-radius:12px 12px 0 0">
+              📍 Jaunpur
+            </div>
+            <div class="card-body pb-2">
+              <div class="d-flex justify-content-between mb-1">
+                <small class="text-muted">350 / 619 uploaded</small>
+                <small class="fw-bold">57%</small>
+              </div>
+              <div class="progress mb-3" style="height:8px;border-radius:4px">
+                <div class="bg-warning progress-bar" style="width:57%"></div>
+              </div>
+              <table class="table table-sm table-borderless mb-0 small">
+                <thead><tr>
+                  <th></th>
+                  <th class="text-center text-muted">Total</th>
+                  <th class="text-center text-success">✅</th>
+                  <th class="text-center text-danger">❌</th>
+                </tr></thead>
+                <tbody><tr>
+              <td>🏛️ Govt</td>
+              <td class="text-center">34</td>
+              <td class="text-center fw-bold text-success">34</td>
+              <td class="text-center text-danger">0</td>
+            </tr><tr>
+              <td>🤝 Aided</td>
+              <td class="text-center">150</td>
+              <td class="text-center fw-bold text-success">132</td>
+              <td class="text-center text-danger">18</td>
+            </tr><tr>
+              <td>🏫 Private</td>
+              <td class="text-center">435</td>
+              <td class="text-center fw-bold text-success">184</td>
+              <td class="text-center text-danger">251</td>
+            </tr></tbody>
+              </table>
+            </div>
+            <div class="card-footer bg-white border-0 pt-0">
+              <a href="reports/Jaunpur_ECO_Club_Status.xlsx" class="btn btn-success btn-sm w-100 fw-bold" download>
+                ⬇️ Report Download करें
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-4 col-md-6 mb-4 district-card" data-name="kannauj">
+          <div class="card h-100 shadow-sm border-0">
+            <div class="card-header text-white fw-bold" style="background:#1F4E79;border-radius:12px 12px 0 0">
+              📍 Kannauj
+            </div>
+            <div class="card-body pb-2">
+              <div class="d-flex justify-content-between mb-1">
+                <small class="text-muted">146 / 383 uploaded</small>
+                <small class="fw-bold">38%</small>
+              </div>
+              <div class="progress mb-3" style="height:8px;border-radius:4px">
+                <div class="bg-danger progress-bar" style="width:38%"></div>
+              </div>
+              <table class="table table-sm table-borderless mb-0 small">
+                <thead><tr>
+                  <th></th>
+                  <th class="text-center text-muted">Total</th>
+                  <th class="text-center text-success">✅</th>
+                  <th class="text-center text-danger">❌</th>
+                </tr></thead>
+                <tbody><tr>
+              <td>🏛️ Govt</td>
+              <td class="text-center">19</td>
+              <td class="text-center fw-bold text-success">19</td>
+              <td class="text-center text-danger">0</td>
+            </tr><tr>
+              <td>🤝 Aided</td>
+              <td class="text-center">59</td>
+              <td class="text-center fw-bold text-success">58</td>
+              <td class="text-center text-danger">1</td>
+            </tr><tr>
+              <td>🏫 Private</td>
+              <td class="text-center">305</td>
+              <td class="text-center fw-bold text-success">69</td>
+              <td class="text-center text-danger">236</td>
+            </tr></tbody>
+              </table>
+            </div>
+            <div class="card-footer bg-white border-0 pt-0">
+              <a href="reports/Kannauj_ECO_Club_Status.xlsx" class="btn btn-success btn-sm w-100 fw-bold" download>
+                ⬇️ Report Download करें
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-4 col-md-6 mb-4 district-card" data-name="lakhimpur kheri">
+          <div class="card h-100 shadow-sm border-0">
+            <div class="card-header text-white fw-bold" style="background:#1F4E79;border-radius:12px 12px 0 0">
+              📍 Lakhimpur Kheri
+            </div>
+            <div class="card-body pb-2">
+              <div class="d-flex justify-content-between mb-1">
+                <small class="text-muted">311 / 317 uploaded</small>
+                <small class="fw-bold">98%</small>
+              </div>
+              <div class="progress mb-3" style="height:8px;border-radius:4px">
+                <div class="bg-success progress-bar" style="width:98%"></div>
+              </div>
+              <table class="table table-sm table-borderless mb-0 small">
+                <thead><tr>
+                  <th></th>
+                  <th class="text-center text-muted">Total</th>
+                  <th class="text-center text-success">✅</th>
+                  <th class="text-center text-danger">❌</th>
+                </tr></thead>
+                <tbody><tr>
+              <td>🏛️ Govt</td>
+              <td class="text-center">55</td>
+              <td class="text-center fw-bold text-success">55</td>
+              <td class="text-center text-danger">0</td>
+            </tr><tr>
+              <td>🤝 Aided</td>
+              <td class="text-center">45</td>
+              <td class="text-center fw-bold text-success">45</td>
+              <td class="text-center text-danger">0</td>
+            </tr><tr>
+              <td>🏫 Private</td>
+              <td class="text-center">217</td>
+              <td class="text-center fw-bold text-success">211</td>
+              <td class="text-center text-danger">6</td>
+            </tr></tbody>
+              </table>
+            </div>
+            <div class="card-footer bg-white border-0 pt-0">
+              <a href="reports/Lakhimpur Kheri_ECO_Club_Status.xlsx" class="btn btn-success btn-sm w-100 fw-bold" download>
+                ⬇️ Report Download करें
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-4 col-md-6 mb-4 district-card" data-name="meerut">
+          <div class="card h-100 shadow-sm border-0">
+            <div class="card-header text-white fw-bold" style="background:#1F4E79;border-radius:12px 12px 0 0">
+              📍 Meerut
+            </div>
+            <div class="card-body pb-2">
+              <div class="d-flex justify-content-between mb-1">
+                <small class="text-muted">227 / 398 uploaded</small>
+                <small class="fw-bold">57%</small>
+              </div>
+              <div class="progress mb-3" style="height:8px;border-radius:4px">
+                <div class="bg-warning progress-bar" style="width:57%"></div>
+              </div>
+              <table class="table table-sm table-borderless mb-0 small">
+                <thead><tr>
+                  <th></th>
+                  <th class="text-center text-muted">Total</th>
+                  <th class="text-center text-success">✅</th>
+                  <th class="text-center text-danger">❌</th>
+                </tr></thead>
+                <tbody><tr>
+              <td>🏛️ Govt</td>
+              <td class="text-center">50</td>
+              <td class="text-center fw-bold text-success">48</td>
+              <td class="text-center text-danger">2</td>
+            </tr><tr>
+              <td>🤝 Aided</td>
+              <td class="text-center">131</td>
+              <td class="text-center fw-bold text-success">125</td>
+              <td class="text-center text-danger">6</td>
+            </tr><tr>
+              <td>🏫 Private</td>
+              <td class="text-center">217</td>
+              <td class="text-center fw-bold text-success">54</td>
+              <td class="text-center text-danger">163</td>
+            </tr></tbody>
+              </table>
+            </div>
+            <div class="card-footer bg-white border-0 pt-0">
+              <a href="reports/Meerut_ECO_Club_Status.xlsx" class="btn btn-success btn-sm w-100 fw-bold" download>
+                ⬇️ Report Download करें
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-4 col-md-6 mb-4 district-card" data-name="mirzapur">
+          <div class="card h-100 shadow-sm border-0">
+            <div class="card-header text-white fw-bold" style="background:#1F4E79;border-radius:12px 12px 0 0">
+              📍 Mirzapur
+            </div>
+            <div class="card-body pb-2">
+              <div class="d-flex justify-content-between mb-1">
+                <small class="text-muted">170 / 305 uploaded</small>
+                <small class="fw-bold">56%</small>
+              </div>
+              <div class="progress mb-3" style="height:8px;border-radius:4px">
+                <div class="bg-warning progress-bar" style="width:56%"></div>
+              </div>
+              <table class="table table-sm table-borderless mb-0 small">
+                <thead><tr>
+                  <th></th>
+                  <th class="text-center text-muted">Total</th>
+                  <th class="text-center text-success">✅</th>
+                  <th class="text-center text-danger">❌</th>
+                </tr></thead>
+                <tbody><tr>
+              <td>🏛️ Govt</td>
+              <td class="text-center">61</td>
+              <td class="text-center fw-bold text-success">61</td>
+              <td class="text-center text-danger">0</td>
+            </tr><tr>
+              <td>🤝 Aided</td>
+              <td class="text-center">52</td>
+              <td class="text-center fw-bold text-success">43</td>
+              <td class="text-center text-danger">9</td>
+            </tr><tr>
+              <td>🏫 Private</td>
+              <td class="text-center">192</td>
+              <td class="text-center fw-bold text-success">66</td>
+              <td class="text-center text-danger">126</td>
+            </tr></tbody>
+              </table>
+            </div>
+            <div class="card-footer bg-white border-0 pt-0">
+              <a href="reports/Mirzapur_ECO_Club_Status.xlsx" class="btn btn-success btn-sm w-100 fw-bold" download>
+                ⬇️ Report Download करें
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-4 col-md-6 mb-4 district-card" data-name="moradabad">
+          <div class="card h-100 shadow-sm border-0">
+            <div class="card-header text-white fw-bold" style="background:#1F4E79;border-radius:12px 12px 0 0">
+              📍 Moradabad
+            </div>
+            <div class="card-body pb-2">
+              <div class="d-flex justify-content-between mb-1">
+                <small class="text-muted">255 / 451 uploaded</small>
+                <small class="fw-bold">57%</small>
+              </div>
+              <div class="progress mb-3" style="height:8px;border-radius:4px">
+                <div class="bg-warning progress-bar" style="width:57%"></div>
+              </div>
+              <table class="table table-sm table-borderless mb-0 small">
+                <thead><tr>
+                  <th></th>
+                  <th class="text-center text-muted">Total</th>
+                  <th class="text-center text-success">✅</th>
+                  <th class="text-center text-danger">❌</th>
+                </tr></thead>
+                <tbody><tr>
+              <td>🏛️ Govt</td>
+              <td class="text-center">50</td>
+              <td class="text-center fw-bold text-success">50</td>
+              <td class="text-center text-danger">0</td>
+            </tr><tr>
+              <td>🤝 Aided</td>
+              <td class="text-center">54</td>
+              <td class="text-center fw-bold text-success">53</td>
+              <td class="text-center text-danger">1</td>
+            </tr><tr>
+              <td>🏫 Private</td>
+              <td class="text-center">347</td>
+              <td class="text-center fw-bold text-success">152</td>
+              <td class="text-center text-danger">195</td>
+            </tr></tbody>
+              </table>
+            </div>
+            <div class="card-footer bg-white border-0 pt-0">
+              <a href="reports/Moradabad_ECO_Club_Status.xlsx" class="btn btn-success btn-sm w-100 fw-bold" download>
+                ⬇️ Report Download करें
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-4 col-md-6 mb-4 district-card" data-name="prayagraj">
+          <div class="card h-100 shadow-sm border-0">
+            <div class="card-header text-white fw-bold" style="background:#1F4E79;border-radius:12px 12px 0 0">
+              📍 Prayagraj
+            </div>
+            <div class="card-body pb-2">
+              <div class="d-flex justify-content-between mb-1">
+                <small class="text-muted">308 / 1214 uploaded</small>
+                <small class="fw-bold">25%</small>
+              </div>
+              <div class="progress mb-3" style="height:8px;border-radius:4px">
+                <div class="bg-danger progress-bar" style="width:25%"></div>
+              </div>
+              <table class="table table-sm table-borderless mb-0 small">
+                <thead><tr>
+                  <th></th>
+                  <th class="text-center text-muted">Total</th>
+                  <th class="text-center text-success">✅</th>
+                  <th class="text-center text-danger">❌</th>
+                </tr></thead>
+                <tbody><tr>
+              <td>🏛️ Govt</td>
+              <td class="text-center">35</td>
+              <td class="text-center fw-bold text-success">35</td>
+              <td class="text-center text-danger">0</td>
+            </tr><tr>
+              <td>🤝 Aided</td>
+              <td class="text-center">181</td>
+              <td class="text-center fw-bold text-success">100</td>
+              <td class="text-center text-danger">81</td>
+            </tr><tr>
+              <td>🏫 Private</td>
+              <td class="text-center">998</td>
+              <td class="text-center fw-bold text-success">173</td>
+              <td class="text-center text-danger">825</td>
+            </tr></tbody>
+              </table>
+            </div>
+            <div class="card-footer bg-white border-0 pt-0">
+              <a href="reports/Prayagraj_ECO_Club_Status.xlsx" class="btn btn-success btn-sm w-100 fw-bold" download>
+                ⬇️ Report Download करें
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-4 col-md-6 mb-4 district-card" data-name="rampur">
+          <div class="card h-100 shadow-sm border-0">
+            <div class="card-header text-white fw-bold" style="background:#1F4E79;border-radius:12px 12px 0 0">
+              📍 Rampur
+            </div>
+            <div class="card-body pb-2">
+              <div class="d-flex justify-content-between mb-1">
+                <small class="text-muted">195 / 237 uploaded</small>
+                <small class="fw-bold">82%</small>
+              </div>
+              <div class="progress mb-3" style="height:8px;border-radius:4px">
+                <div class="bg-success progress-bar" style="width:82%"></div>
+              </div>
+              <table class="table table-sm table-borderless mb-0 small">
+                <thead><tr>
+                  <th></th>
+                  <th class="text-center text-muted">Total</th>
+                  <th class="text-center text-success">✅</th>
+                  <th class="text-center text-danger">❌</th>
+                </tr></thead>
+                <tbody><tr>
+              <td>🏛️ Govt</td>
+              <td class="text-center">55</td>
+              <td class="text-center fw-bold text-success">55</td>
+              <td class="text-center text-danger">0</td>
+            </tr><tr>
+              <td>🤝 Aided</td>
+              <td class="text-center">25</td>
+              <td class="text-center fw-bold text-success">25</td>
+              <td class="text-center text-danger">0</td>
+            </tr><tr>
+              <td>🏫 Private</td>
+              <td class="text-center">157</td>
+              <td class="text-center fw-bold text-success">115</td>
+              <td class="text-center text-danger">42</td>
+            </tr></tbody>
+              </table>
+            </div>
+            <div class="card-footer bg-white border-0 pt-0">
+              <a href="reports/Rampur_ECO_Club_Status.xlsx" class="btn btn-success btn-sm w-100 fw-bold" download>
+                ⬇️ Report Download करें
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-4 col-md-6 mb-4 district-card" data-name="sambhal">
+          <div class="card h-100 shadow-sm border-0">
+            <div class="card-header text-white fw-bold" style="background:#1F4E79;border-radius:12px 12px 0 0">
+              📍 Sambhal
+            </div>
+            <div class="card-body pb-2">
+              <div class="d-flex justify-content-between mb-1">
+                <small class="text-muted">183 / 227 uploaded</small>
+                <small class="fw-bold">81%</small>
+              </div>
+              <div class="progress mb-3" style="height:8px;border-radius:4px">
+                <div class="bg-success progress-bar" style="width:81%"></div>
+              </div>
+              <table class="table table-sm table-borderless mb-0 small">
+                <thead><tr>
+                  <th></th>
+                  <th class="text-center text-muted">Total</th>
+                  <th class="text-center text-success">✅</th>
+                  <th class="text-center text-danger">❌</th>
+                </tr></thead>
+                <tbody><tr>
+              <td>🏛️ Govt</td>
+              <td class="text-center">17</td>
+              <td class="text-center fw-bold text-success">17</td>
+              <td class="text-center text-danger">0</td>
+            </tr><tr>
+              <td>🤝 Aided</td>
+              <td class="text-center">37</td>
+              <td class="text-center fw-bold text-success">37</td>
+              <td class="text-center text-danger">0</td>
+            </tr><tr>
+              <td>🏫 Private</td>
+              <td class="text-center">173</td>
+              <td class="text-center fw-bold text-success">129</td>
+              <td class="text-center text-danger">44</td>
+            </tr></tbody>
+              </table>
+            </div>
+            <div class="card-footer bg-white border-0 pt-0">
+              <a href="reports/Sambhal_ECO_Club_Status.xlsx" class="btn btn-success btn-sm w-100 fw-bold" download>
+                ⬇️ Report Download करें
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-4 col-md-6 mb-4 district-card" data-name="shravasti">
+          <div class="card h-100 shadow-sm border-0">
+            <div class="card-header text-white fw-bold" style="background:#1F4E79;border-radius:12px 12px 0 0">
+              📍 Shravasti
+            </div>
+            <div class="card-body pb-2">
+              <div class="d-flex justify-content-between mb-1">
+                <small class="text-muted">81 / 124 uploaded</small>
+                <small class="fw-bold">65%</small>
+              </div>
+              <div class="progress mb-3" style="height:8px;border-radius:4px">
+                <div class="bg-warning progress-bar" style="width:65%"></div>
+              </div>
+              <table class="table table-sm table-borderless mb-0 small">
+                <thead><tr>
+                  <th></th>
+                  <th class="text-center text-muted">Total</th>
+                  <th class="text-center text-success">✅</th>
+                  <th class="text-center text-danger">❌</th>
+                </tr></thead>
+                <tbody><tr>
+              <td>🏛️ Govt</td>
+              <td class="text-center">28</td>
+              <td class="text-center fw-bold text-success">28</td>
+              <td class="text-center text-danger">0</td>
+            </tr><tr>
+              <td>🤝 Aided</td>
+              <td class="text-center">9</td>
+              <td class="text-center fw-bold text-success">9</td>
+              <td class="text-center text-danger">0</td>
+            </tr><tr>
+              <td>🏫 Private</td>
+              <td class="text-center">87</td>
+              <td class="text-center fw-bold text-success">44</td>
+              <td class="text-center text-danger">43</td>
+            </tr></tbody>
+              </table>
+            </div>
+            <div class="card-footer bg-white border-0 pt-0">
+              <a href="reports/Shravasti_ECO_Club_Status.xlsx" class="btn btn-success btn-sm w-100 fw-bold" download>
+                ⬇️ Report Download करें
+              </a>
+            </div>
+          </div>
+        </div></div>
+  <p id="noResult" class="text-center text-muted d-none mt-4">कोई जिला नहीं मिला।</p>
+</div>
+
+<footer class="text-center py-3 text-muted small">
+  ECO Club — UP Board Secondary Schools &nbsp;|&nbsp; Data auto-updated on push
+</footer>
+
+<script>
+function filterDistricts(q) {
+  q = q.toLowerCase();
+  let visible = 0;
+  document.querySelectorAll('.district-card').forEach(c => {
+    const show = c.dataset.name.includes(q);
+    c.style.display = show ? '' : 'none';
+    if (show) visible++;
+  });
+  document.getElementById('noResult').classList.toggle('d-none', visible > 0);
+}
+</script>
+</body>
+</html>
