@@ -52,8 +52,9 @@ def load_secondary_list():
         for sheet in ["Govt Schools", "Aided Schools", "Private Schools"]
     }
 
-def load_notifications(uploaded_file):
-    return pd.read_excel(uploaded_file)
+@st.cache_data
+def load_notifications():
+    return pd.read_excel("data/All_Schools_with_Notifications_UP.xlsx")
 
 def get_district_data(notifications_df, secondary_data, dist_label):
     sec_pattern, notif_pattern, exact = DISTRICTS[dist_label]
@@ -170,22 +171,14 @@ st.markdown("---")
 
 # ── Sidebar ──
 with st.sidebar:
-    st.header("📁 Notifications File")
-    notif_file = st.file_uploader(
-        "Upload: All_Schools_with_Notifications_UP.xlsx",
-        type=["xlsx"],
-        help="Admin uploads the latest notifications file here"
-    )
+    st.markdown("### ℹ️ About")
+    st.caption("Notifications data is updated centrally by admin. DCs can directly select their district and download the report.")
     st.markdown("---")
-    st.caption("Data source: Final_Secondary_School_List.xlsx (GitHub)")
-
-if notif_file is None:
-    st.info("👈 Sidebar mein notifications file upload karein, phir district choose karein।")
-    st.stop()
+    st.caption("Data source: Final_Secondary_School_List.xlsx")
 
 # Load data
-with st.spinner("File load ho rahi hai..."):
-    notifications_df = load_notifications(notif_file)
+with st.spinner("Data load ho raha hai..."):
+    notifications_df = load_notifications()
     secondary_data   = load_secondary_list()
 
 # ── District selection ──
