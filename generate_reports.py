@@ -180,16 +180,10 @@ def generate_index(summary, generated_time):
         f'      <option value="{s["district"]}">{s["district"]}</option>' for s in ready
     )
 
-    # Pending district rows
-    pending_rows = ""
-    for s in pending:
-        dist = s["district"]
-        tmpl = f"reports/templates/{dist}_Private_Template.xlsx"
-        pending_rows += f"""
-        <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
-          <span class="fw-semibold">📍 {dist}</span>
-          <a href="{tmpl}" class="btn btn-outline-warning btn-sm" download>📥 Template</a>
-        </div>"""
+    # Pending district dropdown options
+    pending_options = "\n".join(
+        f'      <option value="{s["district"]}">{s["district"]}</option>' for s in pending
+    )
 
     html = f"""<!DOCTYPE html>
 <html lang="hi">
@@ -269,18 +263,29 @@ def generate_index(summary, generated_time):
       </div>
     </div>
 
-    <!-- RIGHT: Pending districts -->
+    <!-- RIGHT: Pending districts with client-side upload -->
     <div class="col-lg-5">
       <div class="card shadow-sm h-100 pending-panel">
         <div class="card-header fw-bold bg-warning text-dark" style="border-radius:12px 12px 0 0">
           ⚠️ Private List Pending ({len(pending)})
         </div>
-        <div class="card-body">
-          <p class="text-muted small mb-3">
-            इन जिलों की Private School list अभी upload नहीं हुई।<br>
-            Template download करें → भरें → Admin को भेजें।
-          </p>
-          {pending_rows if pending_rows else '<p class="text-success fw-bold">सभी जिलों की private list उपलब्ध है! 🎉</p>'}
+        <div class="card-body d-flex flex-column">
+          {'<p class="text-success fw-bold mb-0">सभी जिलों की private list उपलब्ध है! 🎉</p>' if not pending else f"""
+          <label class="form-label fw-semibold mb-1">अपना जिला चुनें</label>
+          <select id="pendingSelect" class="form-select mb-3" onchange="showPendingDist(this.value)">
+            <option value="">-- जिला चुनें --</option>
+{pending_options}
+          </select>
+
+          <div id="pendingCard" class="d-none flex-grow-1 d-flex flex-column">
+            <a id="tmplBtn" href="#" class="btn btn-outline-secondary w-100 mb-3" download>
+              📥 Template Download करें
+            </a>
+            <label class="form-label fw-semibold mb-1">Template भरके यहाँ upload करें:</label>
+            <input type="file" id="pvtFile" class="form-control mb-3"
+                   accept=".xlsx,.csv" onchange="processPrivateList()">
+            <div id="pvtResult" class="d-none mt-auto"></div>
+          </div>"""}
         </div>
       </div>
     </div>
@@ -292,31 +297,124 @@ def generate_index(summary, generated_time):
   ECO Club — UP Board Secondary Schools &nbsp;|&nbsp; Auto-updated on data push
 </footer>
 
+<script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
 <script>
 const DATA = {js_data};
+
+// ── Left panel: Ready district info card ──
 function showDist(name) {{
   const card = document.getElementById('distCard');
   if (!name) {{ card.classList.add('d-none'); return; }}
   const d = DATA[name];
-  const barColor = d.pct >= 75 ? 'bg-success' : d.pct >= 40 ? 'bg-warning' : 'bg-danger';
+  const barColor   = d.pct >= 75 ? 'bg-success' : d.pct >= 40 ? 'bg-warning' : 'bg-danger';
   const badgeColor = d.pct >= 75 ? 'bg-success' : d.pct >= 40 ? 'bg-warning text-dark' : 'bg-danger';
   document.getElementById('dLabel').textContent = '📍 ' + name;
-  document.getElementById('dPct').textContent = d.pct + '%';
-  document.getElementById('dPct').className = 'badge fs-6 ' + badgeColor;
-  document.getElementById('dBar').style.width = d.pct + '%';
-  document.getElementById('dBar').className = 'progress-bar ' + barColor;
-  document.getElementById('gT').textContent = d.govt.total;
-  document.getElementById('gU').textContent = d.govt.up;
+  document.getElementById('dPct').textContent   = d.pct + '%';
+  document.getElementById('dPct').className     = 'badge fs-6 ' + badgeColor;
+  document.getElementById('dBar').style.width   = d.pct + '%';
+  document.getElementById('dBar').className     = 'progress-bar ' + barColor;
+  document.getElementById('gT').textContent = d.govt.total;  document.getElementById('gU').textContent = d.govt.up;
   document.getElementById('gP').textContent = d.govt.pend;
-  document.getElementById('aT').textContent = d.aided.total;
-  document.getElementById('aU').textContent = d.aided.up;
+  document.getElementById('aT').textContent = d.aided.total; document.getElementById('aU').textContent = d.aided.up;
   document.getElementById('aP').textContent = d.aided.pend;
-  document.getElementById('pT').textContent = d.pvt.total;
-  document.getElementById('pU').textContent = d.pvt.up;
+  document.getElementById('pT').textContent = d.pvt.total;   document.getElementById('pU').textContent = d.pvt.up;
   document.getElementById('pP').textContent = d.pvt.pend;
   document.getElementById('dBtn').href = d.file;
   document.getElementById('dBtn').textContent = '⬇️ ' + name + ' — Report Download करें';
   card.classList.remove('d-none');
+}}
+
+// ── Right panel: Pending district upload ──
+let _currentPending = '';
+let _pvtResult = null;
+
+function showPendingDist(name) {{
+  _currentPending = name;
+  const card = document.getElementById('pendingCard');
+  if (!name) {{ card.classList.add('d-none'); return; }}
+  document.getElementById('tmplBtn').href     = `reports/templates/${{name}}_Private_Template.xlsx`;
+  document.getElementById('tmplBtn').download = `${{name}}_Private_Template.xlsx`;
+  document.getElementById('pvtFile').value    = '';
+  document.getElementById('pvtResult').classList.add('d-none');
+  card.classList.remove('d-none');
+}}
+
+function normalizeUdise(val) {{
+  return String(val).split('.')[0].replace(/^0+/, '').padStart(10, '0');
+}}
+
+async function processPrivateList() {{
+  const file = document.getElementById('pvtFile').files[0];
+  if (!file || !_currentPending) return;
+  const resultDiv = document.getElementById('pvtResult');
+  resultDiv.innerHTML = '<div class="text-muted small text-center py-2">⏳ Processing...</div>';
+  resultDiv.classList.remove('d-none');
+  try {{
+    const resp = await fetch('reports/notif_udise.json?t=' + Date.now());
+    const notifData = await resp.json();
+    const uploadedSet = new Set(notifData[_currentPending] || []);
+
+    const buf  = await file.arrayBuffer();
+    const wb   = XLSX.read(buf);
+    const ws   = wb.Sheets[wb.SheetNames[0]];
+    const rows = XLSX.utils.sheet_to_json(ws, {{defval: ''}});
+
+    if (!rows.length) {{
+      resultDiv.innerHTML = '<div class="alert alert-warning">File mein koi data nahi mila।</div>';
+      return;
+    }}
+    const udiseKey = Object.keys(rows[0]).find(k => k.toLowerCase().includes('udise'));
+    if (!udiseKey) {{
+      resultDiv.innerHTML = '<div class="alert alert-danger">❌ UDISE column nahi mila। Template use karein।</div>';
+      return;
+    }}
+    _pvtResult = rows.map(row => {{
+      const udise  = normalizeUdise(String(row[udiseKey]));
+      const status = uploadedSet.has(udise) ? 'Uploaded' : 'Pending';
+      const out    = {{}};
+      for (const k of Object.keys(row)) out[k] = row[k];
+      out[udiseKey]       = udise;
+      out['Upload Status'] = status;
+      return out;
+    }});
+    const upCt  = _pvtResult.filter(r => r['Upload Status'] === 'Uploaded').length;
+    const pnCt  = _pvtResult.length - upCt;
+    const pct   = Math.round(upCt / _pvtResult.length * 100);
+    const barcl = pct >= 75 ? 'bg-success' : pct >= 40 ? 'bg-warning' : 'bg-danger';
+    resultDiv.innerHTML = `
+      <div class="fw-bold mb-2">🏫 ${{_currentPending}} — Private Schools</div>
+      <div class="d-flex justify-content-between mb-1">
+        <small>${{upCt}} / ${{_pvtResult.length}} uploaded</small>
+        <small class="fw-bold">${{pct}}%</small>
+      </div>
+      <div class="progress mb-3" style="height:8px">
+        <div class="${{barcl}} progress-bar" style="width:${{pct}}%"></div>
+      </div>
+      <div class="row g-2 mb-3 text-center small">
+        <div class="col-4"><div class="bg-light rounded p-2"><b>${{_pvtResult.length}}</b><br>Total</div></div>
+        <div class="col-4"><div class="bg-success bg-opacity-25 rounded p-2 text-success"><b>${{upCt}}</b><br>✅ Uploaded</div></div>
+        <div class="col-4"><div class="bg-danger bg-opacity-25 rounded p-2 text-danger"><b>${{pnCt}}</b><br>❌ Pending</div></div>
+      </div>
+      <button onclick="downloadPvtReport()" class="btn btn-success w-100 fw-bold">⬇️ Report Download करें</button>`;
+  }} catch(e) {{
+    resultDiv.innerHTML = `<div class="alert alert-danger">Error: ${{e.message}}</div>`;
+  }}
+}}
+
+function downloadPvtReport() {{
+  if (!_pvtResult) return;
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.json_to_sheet(_pvtResult);
+  const range = XLSX.utils.decode_range(ws['!ref'] || 'A1');
+  let statusCol = -1;
+  for (let c = range.s.c; c <= range.e.c; c++) {{
+    const addr = XLSX.utils.encode_cell({{r:0, c}});
+    if (ws[addr] && ws[addr].v === 'Upload Status') {{ statusCol = c; break; }}
+  }}
+  if (!ws['!cols']) ws['!cols'] = [];
+  for (let c = range.s.c; c <= range.e.c; c++) ws['!cols'][c] = {{wch: 18}};
+  XLSX.utils.book_append_sheet(wb, ws, 'Private Schools');
+  XLSX.writeFile(wb, `${{_currentPending}}_Private_Status.xlsx`);
 }}
 </script>
 </body>
@@ -341,6 +439,18 @@ def main():
     secondary_data   = load_secondary_list()
 
     os.makedirs("reports/templates", exist_ok=True)
+
+    # Build UDISE lookup per district for client-side JS matching
+    notif_udise = {}
+    for dist_label, (_, notif_pattern, exact) in DISTRICTS.items():
+        if exact:
+            nd = notifications_df[notifications_df['District'].str.strip().str.upper() == notif_pattern]
+        else:
+            nd = notifications_df[notifications_df['District'].str.strip().str.upper().str.contains(notif_pattern, regex=True, na=False)]
+        notif_udise[dist_label] = [normalize_udise(u) for u in nd['UDISE ID'].dropna().tolist()]
+    with open("reports/notif_udise.json", "w") as f:
+        json.dump(notif_udise, f)
+    print("  notif_udise.json written")
 
     summary = []
     for dist_label in sorted(DISTRICTS.keys()):
@@ -369,7 +479,7 @@ def main():
 
     generated_time = datetime.utcnow().strftime("%d %b %Y, %H:%M UTC")
     generate_index(summary, generated_time)
-    print(f"\nDone! {len(DISTRICTS)} districts | index.html generated.")
+    print(f"\nDone! {len(DISTRICTS)} districts | index.html + notif_udise.json generated.")
 
 if __name__ == "__main__":
     main()
